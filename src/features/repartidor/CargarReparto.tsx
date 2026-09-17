@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useAuth } from '../../auth/AuthContext'
 import { useClients, useTodayDispatches } from './hooks'
+import { useProducts } from '../panadero/hooks'
 import { Card } from '../../components/Card'
 import { Button } from '../../components/Button'
 import { TextField } from '../../components/TextField'
@@ -33,8 +34,14 @@ export function CargarReparto() {
   const { profile } = useAuth()
   const { data: clients } = useClients()
   const { data: dispatches } = useTodayDispatches()
+  const esAdmin = profile?.rol === 'admin'
+  const { data: allProducts } = useProducts()
 
   const productos = useMemo(() => {
+    // El admin no depende de un despacho: vende directo del catálogo, como dueño.
+    if (esAdmin) {
+      return (allProducts ?? []).filter((p) => p.tipo === 'venta_normal')
+    }
     const map = new Map<string, { id: string; nombre: string; precio_unitario: number; unidad_medida: string }>()
     for (const dispatch of dispatches ?? []) {
       if (dispatch.estado !== 'confirmado' && dispatch.estado !== 'resuelto') continue
@@ -43,7 +50,7 @@ export function CargarReparto() {
       }
     }
     return [...map.values()]
-  }, [dispatches])
+  }, [esAdmin, allProducts, dispatches])
 
   const [clienteId, setClienteId] = useState('')
   const [items, setItems] = useState<ItemRow[]>(() => [newRow('')])
