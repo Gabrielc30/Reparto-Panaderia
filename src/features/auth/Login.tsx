@@ -6,7 +6,7 @@ import { TextField } from '../../components/TextField'
 import { Card } from '../../components/Card'
 
 export function Login() {
-  const { session, profile, signIn } = useAuth()
+  const { session, profile, error: profileError, signIn } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -15,6 +15,8 @@ export function Login() {
   if (session && profile) {
     return <Navigate to="/" replace />
   }
+
+  const blockedBySessionError = !!session && !profile && !!profileError
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -50,6 +52,11 @@ export function Login() {
           />
 
           {formError && <p className="text-sm font-medium text-red-600">{formError}</p>}
+          {blockedBySessionError && (
+            <p className="text-sm font-medium text-red-600">
+              No se pudo cargar tu perfil ({profileError}). Contactá al administrador.
+            </p>
+          )}
 
           <Button type="submit" disabled={submitting}>
             {submitting ? 'Ingresando…' : 'Ingresar'}
