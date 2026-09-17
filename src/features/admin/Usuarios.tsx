@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
+import { describeFunctionError } from '../../lib/functionError'
 import { useAuth } from '../../auth/AuthContext'
 import { useAdminUsers, useInvalidateAdmin } from './hooks'
 import { Card } from '../../components/Card'
@@ -44,7 +45,7 @@ export function Usuarios() {
     })
     setSaving(false)
     if (fnError) {
-      setError(fnError.message)
+      setError(await describeFunctionError(fnError))
       return
     }
     setOpen(false)

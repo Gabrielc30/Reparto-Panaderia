@@ -1,4 +1,5 @@
 import { supabase } from './supabaseClient'
+import { describeFunctionError } from './functionError'
 import {
   enqueue,
   getPendingCount,
@@ -13,7 +14,7 @@ type Handler = (payload: unknown) => Promise<void>
 
 async function invokeEdgeFunction(name: string, body: unknown) {
   const { error } = await supabase.functions.invoke(name, { body: body as Record<string, unknown> })
-  if (error) throw error
+  if (error) throw new Error(await describeFunctionError(error))
 }
 
 const handlers: Record<QueueType, Handler> = {
