@@ -53,6 +53,7 @@ export function CargarReparto() {
   const [cobroForma, setCobroForma] = useState<FormaPagoCobro>('efectivo')
   const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const cliente = clients?.find((c) => c.id === clienteId)
 
@@ -83,10 +84,9 @@ export function CargarReparto() {
 
   async function handleSubmit() {
     if (!profile || !clienteId || items.length === 0) return
-    setSubmitting(true)
 
     const deliveryItems = items
-      .filter((row) => row.producto_id)
+      .filter((row) => row.producto_id && Number(row.cantidad) > 0)
       .map((row) => {
         if (row.tipo_movimiento === 'cambio') {
           return {
@@ -108,7 +108,15 @@ export function CargarReparto() {
         }
       })
 
-    await queueMutation('cargar_reparto', {
+    if (deliveryItems.length === 0) {
+      setError('Agregá al menos un producto con cantidad antes de guardar.')
+      return
+    }
+
+    setSubmitting(true)
+    setError(null)
+
+    const result = await queueMutation('cargar_reparto', {
       delivery: {
         panaderia_id: profile.panaderia_id,
         cliente_id: clienteId,
@@ -130,6 +138,10 @@ export function CargarReparto() {
     })
 
     setSubmitting(false)
+    if (!result.ok) {
+      setError(result.error ?? 'No se pudo guardar el reparto.')
+      return
+    }
     setSuccess(true)
     setItems([newRow('')])
     setObservaciones('')
@@ -307,6 +319,8 @@ export function CargarReparto() {
         <p className="text-sm text-brand-700">Total venta</p>
         <p className="text-2xl font-bold text-brand-900">{formatMoney(montoTotal)}</p>
       </div>
+
+      {error && <p className="text-sm font-medium text-red-600">{error}</p>}
 
       <Button onClick={handleSubmit} disabled={submitting || !clienteId}>
         {submitting ? 'Guardando…' : 'Guardar reparto'}

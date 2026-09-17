@@ -23,25 +23,24 @@ export function PanRallado() {
     if (!profile) return
     setSubmitting(true)
     setError(null)
-    try {
-      await queueMutation('conversion_pan_rallado', {
-        panaderia_id: profile.panaderia_id,
-        responsable_id: profile.id,
-        bolsas_viejas_usadas: Number(bolsas || 0),
-        pan_suelto_usado_kg: Number(panSuelto || 0),
-        pan_rallado_obtenido_kg: Number(panRallado || 0),
-        observaciones: observaciones || null,
-      })
-      setSuccess(true)
-      setBolsas('')
-      setPanSuelto('')
-      setPanRallado('')
-      setObservaciones('')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al guardar')
-    } finally {
-      setSubmitting(false)
+    const result = await queueMutation('conversion_pan_rallado', {
+      panaderia_id: profile.panaderia_id,
+      responsable_id: profile.id,
+      bolsas_viejas_usadas: Number(bolsas || 0),
+      pan_suelto_usado_kg: Number(panSuelto || 0),
+      pan_rallado_obtenido_kg: Number(panRallado || 0),
+      observaciones: observaciones || null,
+    })
+    setSubmitting(false)
+    if (!result.ok) {
+      setError(result.error ?? 'Error al guardar')
+      return
     }
+    setSuccess(true)
+    setBolsas('')
+    setPanSuelto('')
+    setPanRallado('')
+    setObservaciones('')
   }
 
   return (

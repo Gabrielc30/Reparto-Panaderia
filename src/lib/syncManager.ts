@@ -12,6 +12,14 @@ import {
 
 type Handler = (payload: unknown) => Promise<void>
 
+function toError(err: unknown): Error {
+  if (err instanceof Error) return err
+  if (err && typeof err === 'object' && 'message' in err) {
+    return new Error(String((err as { message: unknown }).message))
+  }
+  return new Error('Error desconocido')
+}
+
 async function invokeEdgeFunction(name: string, body: unknown) {
   const { error } = await supabase.functions.invoke(name, { body: body as Record<string, unknown> })
   if (error) throw new Error(await describeFunctionError(error))
@@ -33,21 +41,25 @@ const handlers: Record<QueueType, Handler> = {
       .insert(p.delivery as never)
       .select('id')
       .single()
-    if (deliveryError) throw deliveryError
+    if (deliveryError) throw toError(deliveryError)
 
     const items = p.items.map((item) => ({ ...item, delivery_id: delivery.id }))
     const { error: itemsError } = await supabase.from('delivery_items').insert(items as never)
-    if (itemsError) throw itemsError
+    if (itemsError) {
+      // roll back the header so a rejected sale doesn't leave an empty delivery behind
+      await supabase.from('deliveries').delete().eq('id', delivery.id)
+      throw toError(itemsError)
+    }
 
     if (p.pago) {
       const { error: pagoError } = await supabase.from('payments').insert(p.pago as never)
-      if (pagoError) throw pagoError
+      if (pagoError) throw toError(pagoError)
     }
   },
 
   registrar_pago: async (payload) => {
     const { error } = await supabase.from('payments').insert(payload as never)
-    if (error) throw error
+    if (error) throw toError(error)
   },
 
   nuevo_despacho: async (payload) => {
@@ -57,16 +69,19 @@ const handlers: Record<QueueType, Handler> = {
       .insert(p.dispatch as never)
       .select('id')
       .single()
-    if (dispatchError) throw dispatchError
+    if (dispatchError) throw toError(dispatchError)
 
     const items = p.items.map((item) => ({ ...item, dispatch_id: dispatch.id }))
     const { error: itemsError } = await supabase.from('dispatch_items').insert(items as never)
-    if (itemsError) throw itemsError
+    if (itemsError) {
+      await supabase.from('dispatches').delete().eq('id', dispatch.id)
+      throw toError(itemsError)
+    }
   },
 
   nuevo_despacho_local: async (payload) => {
     const { error } = await supabase.from('local_dispatches').insert(payload as never)
-    if (error) throw error
+    if (error) throw toError(error)
   },
 }
 
@@ -87,10 +102,34 @@ export function subscribeSyncStatus(listener: Listener) {
   }
 }
 
-export async function queueMutation(type: QueueType, payload: unknown) {
-  await enqueue(type, payload)
+export interface MutationResult {
+  ok: boolean
+  /** true if the write is still sitting in the offline queue (either because we're offline, or it failed and will retry) */
+  queued: boolean
+  error?: string
+}
+
+export async function queueMutation(type: QueueType, payload: unknown): Promise<MutationResult> {
+  const id = await enqueue(type, payload)
   await notify()
-  void flushQueue()
+
+  if (typeof navigator !== 'undefined' && !navigator.onLine) {
+    return { ok: true, queued: true }
+  }
+
+  try {
+    await handlers[type](payload)
+    await removeQueueItem(id)
+    await notify()
+    return { ok: true, queued: false }
+  } catch (err) {
+    const message = toError(err).message
+    await markQueueItemError(id, message, 1)
+    await notify()
+    return { ok: false, queued: true, error: message }
+  } finally {
+    void flushQueue()
+  }
 }
 
 export async function flushQueue() {
@@ -114,7 +153,7 @@ async function processItem(item: QueueItem) {
     await handler(item.payload)
     if (item.id != null) await removeQueueItem(item.id)
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Error desconocido'
+    const message = toError(err).message
     if (item.id != null) await markQueueItemError(item.id, message, item.attempts + 1)
   }
 }
