@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { Link, NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { SyncStatus } from '../components/SyncStatus'
 
@@ -44,6 +44,15 @@ export function AdminLayout() {
               {item.label}
             </NavLink>
           ))}
+          <div className="my-2 border-t border-brand-100" />
+          <Link
+            to="/repartidor/cargar"
+            onClick={() => setMenuOpen(false)}
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-brand-700 hover:bg-brand-50"
+          >
+            <span>🚚</span>
+            Cargar venta (reparto)
+          </Link>
         </nav>
       </aside>
 

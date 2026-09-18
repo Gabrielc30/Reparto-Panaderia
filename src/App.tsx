@@ -49,7 +49,7 @@ export default function App() {
       <Route
         path="/repartidor"
         element={
-          <ProtectedRoute roles={['repartidor']}>
+          <ProtectedRoute roles={['repartidor', 'admin']}>
             <MobileLayout navItems={repartidorNav} title="Repartidor" />
           </ProtectedRoute>
         }

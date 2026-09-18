@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { Link, NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { SyncStatus } from '../components/SyncStatus'
 
@@ -20,6 +20,11 @@ export function MobileLayout({ navItems, title }: { navItems: NavItem[]; title: 
         </div>
         <div className="flex items-center gap-3">
           <SyncStatus />
+          {profile?.rol === 'admin' && (
+            <Link to="/admin" className="text-sm font-medium text-brand-700 underline">
+              Admin
+            </Link>
+          )}
           <button
             onClick={() => void signOut()}
             className="text-sm font-medium text-brand-700 underline"

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { supabase } from '../../lib/supabaseClient'
+import { describeFunctionError } from '../../lib/functionError'
 import { useDisputes, useInvalidateAdmin } from './hooks'
 import { Card } from '../../components/Card'
 import { Button } from '../../components/Button'
@@ -20,7 +21,7 @@ export function Disputas() {
     })
     setResolving(null)
     if (fnError) {
-      setError(fnError.message)
+      setError(await describeFunctionError(fnError))
       return
     }
     void invalidate('admin-disputes')

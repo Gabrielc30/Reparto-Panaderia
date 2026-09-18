@@ -14,6 +14,7 @@ export function ResumenDia() {
   const { data: cierre, refetch: refetchCierre } = useCierreDia()
   const [closing, setClosing] = useState(false)
   const [closed, setClosed] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const hayDisputa = dispatches?.some((d) => d.estado === 'en_disputa') ?? false
   const yaCerrado = cierre?.estado === 'cerrado' || closed
@@ -34,8 +35,13 @@ export function ResumenDia() {
   async function handleCerrarDia() {
     if (!profile) return
     setClosing(true)
-    await queueMutation('cerrar_dia', { repartidor_id: profile.id, fecha: todayISO() })
+    setError(null)
+    const result = await queueMutation('cerrar_dia', { repartidor_id: profile.id, fecha: todayISO() })
     setClosing(false)
+    if (!result.ok) {
+      setError(result.error ?? 'No se pudo cerrar el día.')
+      return
+    }
     setClosed(true)
     void refetchCierre()
   }
@@ -94,6 +100,7 @@ export function ResumenDia() {
         <Button onClick={handleCerrarDia} disabled={closing || hayDisputa || yaCerrado} variant="primary">
           {yaCerrado ? 'Día cerrado' : closing ? 'Cerrando…' : 'Cerrar día'}
         </Button>
+        {error && <p className="mt-3 text-sm font-medium text-red-600">{error}</p>}
       </Card>
     </div>
   )

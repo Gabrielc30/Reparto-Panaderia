@@ -27,6 +27,7 @@ export function NuevoDespacho() {
   const [observaciones, setObservaciones] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const productosVenta = (products ?? []).filter((p) => p.tipo === 'venta_normal')
 
@@ -47,13 +48,14 @@ export function NuevoDespacho() {
     const validRows = rows.filter((r) => r.producto_id && Number(r.cantidad) > 0)
     if (validRows.length === 0) return
     setSubmitting(true)
+    setError(null)
 
     if (destino === 'repartidor') {
       if (!repartidorId) {
         setSubmitting(false)
         return
       }
-      await queueMutation('nuevo_despacho', {
+      const result = await queueMutation('nuevo_despacho', {
         dispatch: {
           panaderia_id: profile.panaderia_id,
           panadero_id: profile.id,
@@ -64,19 +66,29 @@ export function NuevoDespacho() {
           cantidad_despachada_panadero: Number(r.cantidad),
         })),
       })
+      setSubmitting(false)
+      if (!result.ok) {
+        setError(result.error ?? 'No se pudo crear el despacho.')
+        return
+      }
     } else {
       for (const r of validRows) {
-        await queueMutation('nuevo_despacho_local', {
+        const result = await queueMutation('nuevo_despacho_local', {
           panaderia_id: profile.panaderia_id,
           panadero_id: profile.id,
           producto_id: r.producto_id,
           cantidad: Number(r.cantidad),
           observaciones: observaciones || null,
         })
+        if (!result.ok) {
+          setSubmitting(false)
+          setError(result.error ?? 'No se pudo crear el despacho.')
+          return
+        }
       }
+      setSubmitting(false)
     }
 
-    setSubmitting(false)
     setSuccess(true)
     setRows([newRow()])
     setRepartidorId('')
@@ -185,6 +197,8 @@ export function NuevoDespacho() {
           />
         </Card>
       )}
+
+      {error && <p className="text-sm font-medium text-red-600">{error}</p>}
 
       <Button
         onClick={handleSubmit}

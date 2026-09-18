@@ -57,6 +57,7 @@ function DispatchCard({ dispatch }: { dispatch: DispatchWithItems }) {
   const [comentario, setComentario] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [sent, setSent] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const editable = dispatch.estado === 'pendiente'
   const hayDiferencias = dispatch.dispatch_items.some(
@@ -65,7 +66,8 @@ function DispatchCard({ dispatch }: { dispatch: DispatchWithItems }) {
 
   async function handleConfirm() {
     setSubmitting(true)
-    await queueMutation('confirmar_despacho', {
+    setError(null)
+    const result = await queueMutation('confirmar_despacho', {
       dispatch_id: dispatch.id,
       comentario_repartidor: comentario || null,
       items: dispatch.dispatch_items.map((item) => ({
@@ -74,6 +76,10 @@ function DispatchCard({ dispatch }: { dispatch: DispatchWithItems }) {
       })),
     })
     setSubmitting(false)
+    if (!result.ok) {
+      setError(result.error ?? 'No se pudo confirmar el despacho.')
+      return
+    }
     setSent(true)
     void queryClient.invalidateQueries({ queryKey: ['dispatches', 'today'] })
   }
@@ -128,6 +134,7 @@ function DispatchCard({ dispatch }: { dispatch: DispatchWithItems }) {
           <Button onClick={handleConfirm} disabled={submitting}>
             {hayDiferencias ? 'Reportar diferencia' : 'Confirmar despacho'}
           </Button>
+          {error && <p className="text-sm font-medium text-red-600">{error}</p>}
         </div>
       )}
 
