@@ -18,7 +18,7 @@ import { ResultadoProduccion } from './features/panadero/ResultadoProduccion'
 
 import { Dashboard } from './features/admin/Dashboard'
 import { Clientes } from './features/admin/Clientes'
-import { Productos } from './features/admin/Productos'
+import { Insumos, Productos } from './features/admin/Productos'
 import { Usuarios } from './features/admin/Usuarios'
 import { Disputas } from './features/admin/Disputas'
 import { Reportes } from './features/admin/Reportes'
@@ -92,6 +92,7 @@ export default function App() {
         <Route index element={<Dashboard />} />
         <Route path="clientes" element={<Clientes />} />
         <Route path="productos" element={<Productos />} />
+        <Route path="insumos" element={<Insumos />} />
         <Route path="usuarios" element={<Usuarios />} />
         <Route path="disputas" element={<Disputas />} />
         <Route path="reportes" element={<Reportes />} />
