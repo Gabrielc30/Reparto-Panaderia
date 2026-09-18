@@ -12,6 +12,9 @@ import { ResumenDia } from './features/repartidor/ResumenDia'
 import { NuevoDespacho } from './features/panadero/NuevoDespacho'
 import { PanRallado } from './features/panadero/PanRallado'
 import { Historial } from './features/panadero/Historial'
+import { Produccion } from './features/panadero/Produccion'
+import { NuevaProduccion } from './features/panadero/NuevaProduccion'
+import { ResultadoProduccion } from './features/panadero/ResultadoProduccion'
 
 import { Dashboard } from './features/admin/Dashboard'
 import { Clientes } from './features/admin/Clientes'
@@ -19,6 +22,7 @@ import { Productos } from './features/admin/Productos'
 import { Usuarios } from './features/admin/Usuarios'
 import { Disputas } from './features/admin/Disputas'
 import { Reportes } from './features/admin/Reportes'
+import { Turnos } from './features/admin/Turnos'
 
 const repartidorNav = [
   { to: '/repartidor', label: 'Despacho', icon: '📦' },
@@ -28,6 +32,7 @@ const repartidorNav = [
 
 const panaderoNav = [
   { to: '/panadero', label: 'Despacho', icon: '📦' },
+  { to: '/panadero/produccion', label: 'Producción', icon: '🏭' },
   { to: '/panadero/pan-rallado', label: 'Pan rallado', icon: '🥖' },
   { to: '/panadero/historial', label: 'Historial', icon: '📋' },
 ]
@@ -62,12 +67,15 @@ export default function App() {
       <Route
         path="/panadero"
         element={
-          <ProtectedRoute roles={['panadero']}>
+          <ProtectedRoute roles={['panadero', 'admin']}>
             <MobileLayout navItems={panaderoNav} title="Panadero" />
           </ProtectedRoute>
         }
       >
         <Route index element={<NuevoDespacho />} />
+        <Route path="produccion" element={<Produccion />} />
+        <Route path="produccion/nueva" element={<NuevaProduccion />} />
+        <Route path="produccion/:id/resultado" element={<ResultadoProduccion />} />
         <Route path="pan-rallado" element={<PanRallado />} />
         <Route path="historial" element={<Historial />} />
       </Route>
@@ -86,6 +94,7 @@ export default function App() {
         <Route path="usuarios" element={<Usuarios />} />
         <Route path="disputas" element={<Disputas />} />
         <Route path="reportes" element={<Reportes />} />
+        <Route path="turnos" element={<Turnos />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

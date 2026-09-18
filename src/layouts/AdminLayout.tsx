@@ -10,6 +10,7 @@ const navItems = [
   { to: '/admin/usuarios', label: 'Usuarios', icon: '👥' },
   { to: '/admin/disputas', label: 'Disputas', icon: '⚠️' },
   { to: '/admin/reportes', label: 'Reportes', icon: '📈' },
+  { to: '/admin/turnos', label: 'Turnos de producción', icon: '⏱️' },
 ]
 
 export function AdminLayout() {
@@ -52,6 +53,14 @@ export function AdminLayout() {
           >
             <span>🚚</span>
             Cargar venta (reparto)
+          </Link>
+          <Link
+            to="/panadero/produccion"
+            onClick={() => setMenuOpen(false)}
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-brand-700 hover:bg-brand-50"
+          >
+            <span>🏭</span>
+            Producción
           </Link>
         </nav>
       </aside>

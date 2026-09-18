@@ -522,6 +522,155 @@ export type Database = {
           },
         ]
       }
+      produccion_insumos: {
+        Row: {
+          cantidad: number
+          created_at: string
+          id: string
+          insumo_id: string
+          produccion_id: string
+          producto_id: string
+          unidad_medida: string
+        }
+        Insert: {
+          cantidad: number
+          created_at?: string
+          id?: string
+          insumo_id: string
+          produccion_id: string
+          producto_id: string
+          unidad_medida: string
+        }
+        Update: {
+          cantidad?: number
+          created_at?: string
+          id?: string
+          insumo_id?: string
+          produccion_id?: string
+          producto_id?: string
+          unidad_medida?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "produccion_insumos_insumo_id_fkey"
+            columns: ["insumo_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "produccion_insumos_produccion_id_fkey"
+            columns: ["produccion_id"]
+            isOneToOne: false
+            referencedRelation: "producciones"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "produccion_insumos_producto_id_fkey"
+            columns: ["producto_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      produccion_resultados: {
+        Row: {
+          cantidad_obtenida: number
+          created_at: string
+          id: string
+          produccion_id: string
+          producto_id: string
+          unidad_medida: string
+        }
+        Insert: {
+          cantidad_obtenida: number
+          created_at?: string
+          id?: string
+          produccion_id: string
+          producto_id: string
+          unidad_medida: string
+        }
+        Update: {
+          cantidad_obtenida?: number
+          created_at?: string
+          id?: string
+          produccion_id?: string
+          producto_id?: string
+          unidad_medida?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "produccion_resultados_produccion_id_fkey"
+            columns: ["produccion_id"]
+            isOneToOne: false
+            referencedRelation: "producciones"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "produccion_resultados_producto_id_fkey"
+            columns: ["producto_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      producciones: {
+        Row: {
+          created_at: string
+          estado: string
+          fecha: string
+          fecha_coccion: string | null
+          id: string
+          panaderia_id: string
+          panadero_id: string
+          turno_id: string
+        }
+        Insert: {
+          created_at?: string
+          estado?: string
+          fecha?: string
+          fecha_coccion?: string | null
+          id?: string
+          panaderia_id: string
+          panadero_id: string
+          turno_id: string
+        }
+        Update: {
+          created_at?: string
+          estado?: string
+          fecha?: string
+          fecha_coccion?: string | null
+          id?: string
+          panaderia_id?: string
+          panadero_id?: string
+          turno_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "producciones_panaderia_id_fkey"
+            columns: ["panaderia_id"]
+            isOneToOne: false
+            referencedRelation: "panaderias"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "producciones_panadero_id_fkey"
+            columns: ["panadero_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "producciones_turno_id_fkey"
+            columns: ["turno_id"]
+            isOneToOne: false
+            referencedRelation: "turnos_produccion"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           created_at: string
@@ -614,6 +763,41 @@ export type Database = {
           },
         ]
       }
+      turnos_produccion: {
+        Row: {
+          activo: boolean
+          created_at: string
+          id: string
+          nombre: string
+          orden: number
+          panaderia_id: string
+        }
+        Insert: {
+          activo?: boolean
+          created_at?: string
+          id?: string
+          nombre: string
+          orden?: number
+          panaderia_id: string
+        }
+        Update: {
+          activo?: boolean
+          created_at?: string
+          id?: string
+          nombre?: string
+          orden?: number
+          panaderia_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "turnos_produccion_panaderia_id_fkey"
+            columns: ["panaderia_id"]
+            isOneToOne: false
+            referencedRelation: "panaderias"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           created_at: string
@@ -663,6 +847,30 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      aplicar_conversion_pan_rallado: {
+        Args: {
+          p_bolsas_viejas_usadas: number
+          p_observaciones: string
+          p_pan_rallado_obtenido_kg: number
+          p_pan_suelto_usado_kg: number
+          p_panaderia_id: string
+          p_producto_rallado_id: string
+          p_producto_suelto_id: string
+          p_producto_viejo_id: string
+          p_responsable_id: string
+        }
+        Returns: {
+          bolsas_viejas_usadas: number
+          created_at: string
+          fecha: string
+          id: string
+          observaciones: string | null
+          pan_rallado_obtenido_kg: number
+          pan_suelto_usado_kg: number
+          panaderia_id: string
+          responsable_id: string
+        }
+      }
       auth_panaderia_id: { Args: never; Returns: string }
       auth_rol: { Args: never; Returns: string }
     }
@@ -756,6 +964,40 @@ export type TablesUpdate<
       }
       ? U
       : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never) = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never) = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
 
 export const Constants = {
