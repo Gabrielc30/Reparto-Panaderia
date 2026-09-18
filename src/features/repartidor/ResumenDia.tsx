@@ -4,6 +4,8 @@ import { useCierreDia, useTodayDeliveries, useTodayDispatches } from './hooks'
 import { Card } from '../../components/Card'
 import { Badge } from '../../components/Badge'
 import { Button } from '../../components/Button'
+import { ConfirmButton } from '../../components/ConfirmButton'
+import { CardSkeleton } from '../../components/Skeleton'
 import { formatMoney, formatDateTime, todayISO } from '../../lib/date'
 import { queueMutation } from '../../lib/syncManager'
 
@@ -46,7 +48,15 @@ export function ResumenDia() {
     void refetchCierre()
   }
 
-  if (isLoading) return <p className="text-brand-500">Cargando resumen…</p>
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <CardSkeleton rows={2} />
+        <CardSkeleton rows={3} />
+        <CardSkeleton rows={1} />
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4">
@@ -97,9 +107,19 @@ export function ResumenDia() {
             Tenés un despacho en disputa. Resolvé la diferencia con el admin antes de cerrar.
           </p>
         )}
-        <Button onClick={handleCerrarDia} disabled={closing || hayDisputa || yaCerrado} variant="primary">
-          {yaCerrado ? 'Día cerrado' : closing ? 'Cerrando…' : 'Cerrar día'}
-        </Button>
+        {yaCerrado ? (
+          <Button disabled variant="primary">
+            Día cerrado
+          </Button>
+        ) : (
+          <ConfirmButton
+            label={closing ? 'Cerrando…' : 'Cerrar día'}
+            confirmLabel="Sí, cerrar"
+            message="¿Seguro que querés cerrar el día? No se puede deshacer."
+            onConfirm={handleCerrarDia}
+            disabled={closing || hayDisputa}
+          />
+        )}
         {error && <p className="mt-3 text-sm font-medium text-red-600">{error}</p>}
       </Card>
     </div>

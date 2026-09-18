@@ -2,12 +2,24 @@ import { Link } from 'react-router-dom'
 import { useDashboard } from './hooks'
 import { Card } from '../../components/Card'
 import { Badge } from '../../components/Badge'
+import { CardSkeleton } from '../../components/Skeleton'
 import { formatMoney } from '../../lib/date'
 
 export function Dashboard() {
   const { data, isLoading } = useDashboard()
 
-  if (isLoading) return <p className="text-brand-500">Cargando dashboard…</p>
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <CardSkeleton rows={1} />
+        <CardSkeleton rows={1} />
+        <CardSkeleton rows={1} />
+        <div className="md:col-span-2 lg:col-span-3">
+          <CardSkeleton rows={3} />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">

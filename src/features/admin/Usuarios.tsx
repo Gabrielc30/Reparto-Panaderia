@@ -8,6 +8,7 @@ import { Button } from '../../components/Button'
 import { TextField } from '../../components/TextField'
 import { SelectField } from '../../components/SelectField'
 import { Badge } from '../../components/Badge'
+import { TableSkeleton } from '../../components/Skeleton'
 import type { EstadoUsuario, Rol } from '../../types/domain'
 
 const emptyForm = {
@@ -136,7 +137,7 @@ export function Usuarios() {
 
       <Card>
         {isLoading ? (
-          <p className="text-brand-500">Cargando…</p>
+          <TableSkeleton cols={4} />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">

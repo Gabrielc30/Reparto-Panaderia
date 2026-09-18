@@ -6,6 +6,7 @@ import { Card } from '../../components/Card'
 import { Button } from '../../components/Button'
 import { TextField } from '../../components/TextField'
 import { SelectField } from '../../components/SelectField'
+import { TableSkeleton } from '../../components/Skeleton'
 import { formatMoney } from '../../lib/date'
 import type { Client, CondicionPago } from '../../types/domain'
 
@@ -119,7 +120,7 @@ export function Clientes() {
 
       <Card>
         {isLoading ? (
-          <p className="text-brand-500">Cargando…</p>
+          <TableSkeleton cols={3} />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">

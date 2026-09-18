@@ -87,6 +87,19 @@ export async function markQueueItemError(id: number, error: string, attempts: nu
   await db.put('sync_queue', item)
 }
 
+export async function getErroredItems() {
+  const db = await getDb()
+  return db.getAllFromIndex('sync_queue', 'by-status', 'error')
+}
+
+export async function retryQueueItem(id: number) {
+  const db = await getDb()
+  const item = await db.get('sync_queue', id)
+  if (!item) return
+  item.status = 'pending'
+  await db.put('sync_queue', item)
+}
+
 export async function retryErroredItems() {
   const db = await getDb()
   const errored = await db.getAllFromIndex('sync_queue', 'by-status', 'error')

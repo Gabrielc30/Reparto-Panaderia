@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { supabase } from '../../lib/supabaseClient'
 import { Card } from '../../components/Card'
 import { TextField } from '../../components/TextField'
+import { CardSkeleton } from '../../components/Skeleton'
 import { formatMoney } from '../../lib/date'
 
 function useReportes(desde: string, hasta: string) {
@@ -82,7 +83,12 @@ export function Reportes() {
       </Card>
 
       {isLoading ? (
-        <p className="text-brand-500">Cargando reportes…</p>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <CardSkeleton rows={1} />
+          <CardSkeleton rows={1} />
+          <CardSkeleton rows={1} />
+          <CardSkeleton rows={1} />
+        </div>
       ) : (
         <>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">

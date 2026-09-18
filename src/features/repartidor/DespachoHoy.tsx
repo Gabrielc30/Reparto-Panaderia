@@ -5,6 +5,8 @@ import { Card } from '../../components/Card'
 import { Badge } from '../../components/Badge'
 import { Button } from '../../components/Button'
 import { TextField } from '../../components/TextField'
+import { NumberStepper } from '../../components/NumberStepper'
+import { CardSkeleton } from '../../components/Skeleton'
 import { queueMutation } from '../../lib/syncManager'
 import type { DispatchWithItems } from '../../types/domain'
 
@@ -25,7 +27,7 @@ const estadoLabel: Record<string, string> = {
 export function DespachoHoy() {
   const { data: dispatches, isLoading } = useTodayDispatches()
 
-  if (isLoading) return <p className="text-brand-500">Cargando despacho…</p>
+  if (isLoading) return <CardSkeleton rows={3} />
 
   if (!dispatches || dispatches.length === 0) {
     return (
@@ -95,7 +97,7 @@ function DispatchCard({ dispatch }: { dispatch: DispatchWithItems }) {
 
       <div className="space-y-3">
         {dispatch.dispatch_items.map((item) => (
-          <div key={item.id} className="flex items-center justify-between gap-3">
+          <div key={item.id} className={editable ? 'space-y-2' : 'flex items-center justify-between gap-3'}>
             <div>
               <p className="font-medium text-brand-900">{item.products.nombre}</p>
               <p className="text-xs text-brand-500">
@@ -103,14 +105,10 @@ function DispatchCard({ dispatch }: { dispatch: DispatchWithItems }) {
               </p>
             </div>
             {editable ? (
-              <input
-                type="number"
-                inputMode="decimal"
-                min={0}
-                step="0.01"
-                className="w-24 rounded-lg border-2 border-brand-100 px-3 py-2 text-right"
-                value={values[item.id]}
-                onChange={(e) => setValues((v) => ({ ...v, [item.id]: e.target.value }))}
+              <NumberStepper
+                value={Number(values[item.id])}
+                onChange={(v) => setValues((vals) => ({ ...vals, [item.id]: String(v) }))}
+                step={item.products.unidad_medida === 'kg' ? 0.1 : 1}
               />
             ) : (
               <p className="font-semibold text-brand-900">

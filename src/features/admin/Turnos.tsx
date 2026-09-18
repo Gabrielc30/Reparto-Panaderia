@@ -6,6 +6,7 @@ import { Card } from '../../components/Card'
 import { Button } from '../../components/Button'
 import { TextField } from '../../components/TextField'
 import { Badge } from '../../components/Badge'
+import { TableSkeleton } from '../../components/Skeleton'
 import type { TurnoProduccion } from '../../types/domain'
 
 const emptyForm = { nombre: '', orden: '0' }
@@ -107,7 +108,7 @@ export function Turnos() {
 
       <Card>
         {isLoading ? (
-          <p className="text-brand-500">Cargando…</p>
+          <TableSkeleton cols={3} />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">

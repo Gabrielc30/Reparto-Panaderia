@@ -6,6 +6,7 @@ import { Card } from '../../components/Card'
 import { Button } from '../../components/Button'
 import { TextField } from '../../components/TextField'
 import { SelectField } from '../../components/SelectField'
+import { NumberStepper } from '../../components/NumberStepper'
 import { queueMutation } from '../../lib/syncManager'
 import { todayISO } from '../../lib/date'
 
@@ -174,24 +175,20 @@ export function NuevaProduccion() {
                       </option>
                     ))}
                   </SelectField>
-                  <div className="mt-2 flex items-end gap-2">
-                    <div className="flex-1">
-                      <TextField
-                        label={`Cantidad${materiaPrima ? ` (${materiaPrima.unidad_medida})` : ''}`}
-                        type="number"
-                        min={0}
-                        step="0.01"
-                        value={insumo.cantidad}
-                        onChange={(e) => updateInsumo(linea.key, insumo.key, { cantidad: e.target.value })}
-                      />
-                    </div>
+                  <div className="mt-2 space-y-2">
+                    <NumberStepper
+                      label={`Cantidad${materiaPrima ? ` (${materiaPrima.unidad_medida})` : ''}`}
+                      value={Number(insumo.cantidad || 0)}
+                      onChange={(v) => updateInsumo(linea.key, insumo.key, { cantidad: String(v) })}
+                      step={0.01}
+                    />
                     {linea.insumos.length > 1 && (
                       <button
                         type="button"
                         onClick={() => removeInsumo(linea.key, insumo.key)}
-                        className="pb-3 text-red-600"
+                        className="text-sm text-red-600"
                       >
-                        ✕
+                        Quitar insumo
                       </button>
                     )}
                   </div>

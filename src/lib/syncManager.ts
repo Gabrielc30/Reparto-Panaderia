@@ -2,10 +2,13 @@ import { supabase } from './supabaseClient'
 import { describeFunctionError } from './functionError'
 import {
   enqueue,
+  getErroredItems,
   getPendingCount,
   getPendingItems,
   markQueueItemError,
   removeQueueItem,
+  retryErroredItems,
+  retryQueueItem,
   type QueueItem,
   type QueueType,
 } from './db'
@@ -88,13 +91,31 @@ const handlers: Record<QueueType, Handler> = {
   cargar_resultado_produccion: (payload) => invokeEdgeFunction('cargar-resultado-produccion', payload),
 }
 
-type Listener = (pendingCount: number) => void
+export const queueTypeLabels: Record<QueueType, string> = {
+  confirmar_despacho: 'Confirmación de despacho',
+  cargar_reparto: 'Reparto (venta / cambio)',
+  registrar_pago: 'Pago registrado',
+  cerrar_dia: 'Cierre de día',
+  nuevo_despacho: 'Nuevo despacho a repartidor',
+  nuevo_despacho_local: 'Despacho al local',
+  conversion_pan_rallado: 'Conversión a pan rallado',
+  crear_produccion: 'Nueva producción',
+  cargar_resultado_produccion: 'Resultado de producción',
+}
+
+export interface SyncState {
+  pendingCount: number
+  erroredItems: QueueItem[]
+}
+
+type Listener = (state: SyncState) => void
 const listeners = new Set<Listener>()
 let flushing = false
 
 async function notify() {
-  const count = await getPendingCount()
-  for (const listener of listeners) listener(count)
+  const [pendingCount, erroredItems] = await Promise.all([getPendingCount(), getErroredItems()])
+  const state: SyncState = { pendingCount, erroredItems }
+  for (const listener of listeners) listener(state)
 }
 
 export function subscribeSyncStatus(listener: Listener) {
@@ -103,6 +124,18 @@ export function subscribeSyncStatus(listener: Listener) {
   return () => {
     listeners.delete(listener)
   }
+}
+
+export async function retryItem(id: number) {
+  await retryQueueItem(id)
+  await notify()
+  void flushQueue()
+}
+
+export async function retryAllErrored() {
+  await retryErroredItems()
+  await notify()
+  void flushQueue()
 }
 
 export interface MutationResult {

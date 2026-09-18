@@ -6,6 +6,7 @@ import { Card } from '../../components/Card'
 import { Button } from '../../components/Button'
 import { TextField } from '../../components/TextField'
 import { SelectField } from '../../components/SelectField'
+import { NumberStepper } from '../../components/NumberStepper'
 import { queueMutation } from '../../lib/syncManager'
 import { formatMoney } from '../../lib/date'
 import type { FormaPagoCobro, TipoMovimiento } from '../../types/domain'
@@ -61,8 +62,12 @@ export function CargarReparto() {
   const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [attemptedSubmit, setAttemptedSubmit] = useState(false)
 
   const cliente = clients?.find((c) => c.id === clienteId)
+  const invalidCantidadKeys = new Set(
+    items.filter((row) => row.producto_id && !(Number(row.cantidad) > 0)).map((row) => row.key),
+  )
 
   function updateItem(key: string, patch: Partial<ItemRow>) {
     setItems((rows) => rows.map((row) => (row.key === key ? { ...row, ...patch } : row)))
@@ -116,10 +121,12 @@ export function CargarReparto() {
       })
 
     if (deliveryItems.length === 0) {
+      setAttemptedSubmit(true)
       setError('Agregá al menos un producto con cantidad antes de guardar.')
       return
     }
 
+    setAttemptedSubmit(false)
     setSubmitting(true)
     setError(null)
 
@@ -230,14 +237,17 @@ export function CargarReparto() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
-                <TextField
+              <div className="space-y-2">
+                <NumberStepper
                   label="Cantidad"
-                  type="number"
-                  min={0}
-                  step="0.01"
-                  value={row.cantidad}
-                  onChange={(e) => updateItem(row.key, { cantidad: e.target.value })}
+                  value={Number(row.cantidad || 0)}
+                  onChange={(v) => updateItem(row.key, { cantidad: String(v) })}
+                  step={0.01}
+                  error={
+                    attemptedSubmit && invalidCantidadKeys.has(row.key)
+                      ? 'Ingresá una cantidad mayor a 0.'
+                      : undefined
+                  }
                 />
                 {row.tipo_movimiento === 'venta' && (
                   <TextField
