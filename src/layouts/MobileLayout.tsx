@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { SyncStatus } from '../components/SyncStatus'
@@ -5,7 +6,7 @@ import { SyncStatus } from '../components/SyncStatus'
 interface NavItem {
   to: string
   label: string
-  icon: string
+  icon: ReactNode
 }
 
 export function MobileLayout({ navItems, title }: { navItems: NavItem[]; title: string }) {
@@ -49,7 +50,7 @@ export function MobileLayout({ navItems, title }: { navItems: NavItem[]; title: 
               }`
             }
           >
-            <span className="text-xl">{item.icon}</span>
+            <span className="text-xl [&>svg]:h-6 [&>svg]:w-6">{item.icon}</span>
             {item.label}
           </NavLink>
         ))}

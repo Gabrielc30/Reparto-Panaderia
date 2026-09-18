@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
-import { subscribeSyncStatus } from '../lib/syncManager'
+import { subscribeSyncStatus, type SyncState } from '../lib/syncManager'
+
+const empty: SyncState = { pendingCount: 0, erroredItems: [] }
 
 export function useSyncStatus() {
-  const [pendingCount, setPendingCount] = useState(0)
+  const [state, setState] = useState<SyncState>(empty)
 
-  useEffect(() => subscribeSyncStatus(setPendingCount), [])
+  useEffect(() => subscribeSyncStatus(setState), [])
 
-  return { pendingCount, isSyncing: pendingCount > 0 }
+  return { pendingCount: state.pendingCount, erroredItems: state.erroredItems, isSyncing: state.pendingCount > 0 }
 }

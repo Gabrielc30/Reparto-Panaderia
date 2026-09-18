@@ -4,6 +4,7 @@ import { useProducts } from './hooks'
 import { Card } from '../../components/Card'
 import { Button } from '../../components/Button'
 import { TextField } from '../../components/TextField'
+import { NumberStepper } from '../../components/NumberStepper'
 import { queueMutation } from '../../lib/syncManager'
 
 export function PanRallado() {
@@ -62,29 +63,23 @@ export function PanRallado() {
       <Card>
         <p className="mb-3 font-semibold text-brand-900">Nueva conversión</p>
         <div className="space-y-3">
-          <TextField
+          <NumberStepper
             label="Bolsas de pan viejo usadas"
-            type="number"
-            min={0}
-            step="1"
-            value={bolsas}
-            onChange={(e) => setBolsas(e.target.value)}
+            value={Number(bolsas || 0)}
+            onChange={(v) => setBolsas(String(v))}
+            step={1}
           />
-          <TextField
+          <NumberStepper
             label="Kg de pan suelto usado"
-            type="number"
-            min={0}
-            step="0.01"
-            value={panSuelto}
-            onChange={(e) => setPanSuelto(e.target.value)}
+            value={Number(panSuelto || 0)}
+            onChange={(v) => setPanSuelto(String(v))}
+            step={0.1}
           />
-          <TextField
+          <NumberStepper
             label="Kg de pan rallado obtenido"
-            type="number"
-            min={0}
-            step="0.01"
-            value={panRallado}
-            onChange={(e) => setPanRallado(e.target.value)}
+            value={Number(panRallado || 0)}
+            onChange={(v) => setPanRallado(String(v))}
+            step={0.1}
           />
           <TextField
             label="Observaciones"

@@ -3,8 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useProduccionDetalle } from './hooks'
 import { Card } from '../../components/Card'
 import { Button } from '../../components/Button'
-import { TextField } from '../../components/TextField'
 import { Badge } from '../../components/Badge'
+import { NumberStepper } from '../../components/NumberStepper'
+import { CardSkeleton } from '../../components/Skeleton'
 import { queueMutation } from '../../lib/syncManager'
 import type { ProduccionConDetalle } from '../../types/domain'
 
@@ -27,7 +28,7 @@ export function ResultadoProduccion() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  if (isLoading) return <p className="text-brand-500">Cargando…</p>
+  if (isLoading) return <CardSkeleton rows={2} />
   if (!produccion) return <p className="text-brand-500">Producción no encontrada.</p>
 
   const yaCocinado = produccion.estado === 'cocinado'
@@ -94,14 +95,12 @@ export function ResultadoProduccion() {
           <p className="mb-3 font-semibold text-brand-900">Cantidad obtenida</p>
           <div className="space-y-3">
             {productos.map((producto) => (
-              <TextField
+              <NumberStepper
                 key={producto.id}
                 label={`${producto.nombre} (${producto.unidad_medida})`}
-                type="number"
-                min={0}
-                step="0.01"
-                value={cantidades[producto.id] ?? ''}
-                onChange={(e) => setCantidades((c) => ({ ...c, [producto.id]: e.target.value }))}
+                value={Number(cantidades[producto.id] || 0)}
+                onChange={(v) => setCantidades((c) => ({ ...c, [producto.id]: String(v) }))}
+                step={0.01}
               />
             ))}
           </div>

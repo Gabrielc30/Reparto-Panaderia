@@ -2,15 +2,31 @@ import { useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { SyncStatus } from '../components/SyncStatus'
+import {
+  IconAlertTriangle,
+  IconBars,
+  IconBox,
+  IconClock,
+  IconDocument,
+  IconFactory,
+  IconTrendingUp,
+  IconTruck,
+  IconUsers,
+} from '../components/icons'
 
-const navItems = [
-  { to: '/admin', label: 'Dashboard', icon: '📊', end: true },
-  { to: '/admin/clientes', label: 'Clientes', icon: '🧾' },
-  { to: '/admin/productos', label: 'Productos', icon: '🍞' },
-  { to: '/admin/usuarios', label: 'Usuarios', icon: '👥' },
-  { to: '/admin/disputas', label: 'Disputas', icon: '⚠️' },
-  { to: '/admin/reportes', label: 'Reportes', icon: '📈' },
-  { to: '/admin/turnos', label: 'Turnos de producción', icon: '⏱️' },
+const pageItems = [
+  { to: '/admin', label: 'Dashboard', icon: <IconBars />, end: true },
+  { to: '/admin/clientes', label: 'Clientes', icon: <IconDocument /> },
+  { to: '/admin/productos', label: 'Productos', icon: <IconBox /> },
+  { to: '/admin/usuarios', label: 'Usuarios', icon: <IconUsers /> },
+  { to: '/admin/disputas', label: 'Disputas', icon: <IconAlertTriangle /> },
+  { to: '/admin/reportes', label: 'Reportes', icon: <IconTrendingUp /> },
+  { to: '/admin/turnos', label: 'Turnos de producción', icon: <IconClock /> },
+]
+
+const shortcutItems = [
+  { to: '/repartidor/cargar', label: 'Cargar venta (reparto)', icon: <IconTruck /> },
+  { to: '/panadero/produccion', label: 'Producción', icon: <IconFactory /> },
 ]
 
 export function AdminLayout() {
@@ -29,39 +45,36 @@ export function AdminLayout() {
           <p className="text-xs text-brand-500">Panel de administración</p>
         </div>
         <nav className="flex flex-col gap-1 p-3">
-          {navItems.map((item) => (
+          <p className="px-3 pb-2 pt-1 text-xs font-bold uppercase tracking-wide text-brand-500/70">Páginas</p>
+          {pageItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               end={item.end}
               onClick={() => setMenuOpen(false)}
               className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium ${
+                `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium [&>svg]:h-[18px] [&>svg]:w-[18px] ${
                   isActive ? 'bg-brand-700 text-white' : 'text-brand-700 hover:bg-brand-50'
                 }`
               }
             >
-              <span>{item.icon}</span>
+              {item.icon}
               {item.label}
             </NavLink>
           ))}
-          <div className="my-2 border-t border-brand-100" />
-          <Link
-            to="/repartidor/cargar"
-            onClick={() => setMenuOpen(false)}
-            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-brand-700 hover:bg-brand-50"
-          >
-            <span>🚚</span>
-            Cargar venta (reparto)
-          </Link>
-          <Link
-            to="/panadero/produccion"
-            onClick={() => setMenuOpen(false)}
-            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-brand-700 hover:bg-brand-50"
-          >
-            <span>🏭</span>
-            Producción
-          </Link>
+
+          <p className="px-3 pb-2 pt-4 text-xs font-bold uppercase tracking-wide text-brand-500/70">Atajos</p>
+          {shortcutItems.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-brand-700 hover:bg-brand-50 [&>svg]:h-[18px] [&>svg]:w-[18px]"
+            >
+              {item.icon}
+              {item.label}
+            </Link>
+          ))}
         </nav>
       </aside>
 

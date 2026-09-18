@@ -23,18 +23,19 @@ import { Usuarios } from './features/admin/Usuarios'
 import { Disputas } from './features/admin/Disputas'
 import { Reportes } from './features/admin/Reportes'
 import { Turnos } from './features/admin/Turnos'
+import { IconBox, IconBread, IconCalendar, IconClock, IconDocument, IconFactory } from './components/icons'
 
 const repartidorNav = [
-  { to: '/repartidor', label: 'Despacho', icon: '📦' },
-  { to: '/repartidor/cargar', label: 'Cargar', icon: '🧾' },
-  { to: '/repartidor/resumen', label: 'Resumen', icon: '📅' },
+  { to: '/repartidor', label: 'Despacho', icon: <IconBox /> },
+  { to: '/repartidor/cargar', label: 'Cargar', icon: <IconDocument /> },
+  { to: '/repartidor/resumen', label: 'Resumen', icon: <IconCalendar /> },
 ]
 
 const panaderoNav = [
-  { to: '/panadero', label: 'Despacho', icon: '📦' },
-  { to: '/panadero/produccion', label: 'Producción', icon: '🏭' },
-  { to: '/panadero/pan-rallado', label: 'Pan rallado', icon: '🥖' },
-  { to: '/panadero/historial', label: 'Historial', icon: '📋' },
+  { to: '/panadero', label: 'Despacho', icon: <IconBox /> },
+  { to: '/panadero/produccion', label: 'Producción', icon: <IconFactory /> },
+  { to: '/panadero/pan-rallado', label: 'Pan rallado', icon: <IconBread /> },
+  { to: '/panadero/historial', label: 'Historial', icon: <IconClock /> },
 ]
 
 function HomeRedirect() {

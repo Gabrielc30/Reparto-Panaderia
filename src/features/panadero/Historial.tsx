@@ -1,6 +1,7 @@
 import { useHistorialPanadero } from './hooks'
 import { Card } from '../../components/Card'
 import { Badge } from '../../components/Badge'
+import { CardSkeleton } from '../../components/Skeleton'
 import { formatDateTime } from '../../lib/date'
 
 const estadoTone: Record<string, 'neutral' | 'success' | 'warning' | 'danger'> = {
@@ -13,7 +14,15 @@ const estadoTone: Record<string, 'neutral' | 'success' | 'warning' | 'danger'> =
 export function Historial() {
   const { data, isLoading } = useHistorialPanadero()
 
-  if (isLoading) return <p className="text-brand-500">Cargando historial…</p>
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <CardSkeleton rows={2} />
+        <CardSkeleton rows={2} />
+        <CardSkeleton rows={2} />
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4">

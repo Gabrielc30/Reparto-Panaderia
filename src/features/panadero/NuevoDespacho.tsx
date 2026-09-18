@@ -5,6 +5,7 @@ import { Card } from '../../components/Card'
 import { Button } from '../../components/Button'
 import { TextField } from '../../components/TextField'
 import { SelectField } from '../../components/SelectField'
+import { NumberStepper } from '../../components/NumberStepper'
 import { queueMutation } from '../../lib/syncManager'
 
 interface Row {
@@ -150,34 +151,28 @@ export function NuevoDespacho() {
         <p className="mb-3 font-semibold text-brand-900">Productos</p>
         <div className="space-y-3">
           {rows.map((row) => (
-            <div key={row.key} className="flex items-end gap-2 rounded-xl border border-brand-100 p-3">
-              <div className="flex-1">
-                <SelectField
-                  label="Producto"
-                  value={row.producto_id}
-                  onChange={(e) => updateRow(row.key, { producto_id: e.target.value })}
-                >
-                  <option value="">Elegir…</option>
-                  {productosVenta.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.nombre}
-                    </option>
-                  ))}
-                </SelectField>
-              </div>
-              <div className="w-24">
-                <TextField
-                  label="Cant."
-                  type="number"
-                  min={0}
-                  step="0.01"
-                  value={row.cantidad}
-                  onChange={(e) => updateRow(row.key, { cantidad: e.target.value })}
-                />
-              </div>
+            <div key={row.key} className="space-y-2 rounded-xl border border-brand-100 p-3">
+              <SelectField
+                label="Producto"
+                value={row.producto_id}
+                onChange={(e) => updateRow(row.key, { producto_id: e.target.value })}
+              >
+                <option value="">Elegir…</option>
+                {productosVenta.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nombre}
+                  </option>
+                ))}
+              </SelectField>
+              <NumberStepper
+                label="Cantidad"
+                value={Number(row.cantidad || 0)}
+                onChange={(v) => updateRow(row.key, { cantidad: String(v) })}
+                step={0.01}
+              />
               {rows.length > 1 && (
-                <button type="button" onClick={() => removeRow(row.key)} className="pb-3 text-red-600">
-                  ✕
+                <button type="button" onClick={() => removeRow(row.key)} className="text-sm text-red-600">
+                  Quitar producto
                 </button>
               )}
             </div>

@@ -3,8 +3,9 @@ import { supabase } from '../../lib/supabaseClient'
 import { describeFunctionError } from '../../lib/functionError'
 import { useDisputes, useInvalidateAdmin } from './hooks'
 import { Card } from '../../components/Card'
-import { Button } from '../../components/Button'
+import { ConfirmButton } from '../../components/ConfirmButton'
 import { TextField } from '../../components/TextField'
+import { CardSkeleton } from '../../components/Skeleton'
 
 export function Disputas() {
   const { data: disputes, isLoading } = useDisputes()
@@ -28,7 +29,14 @@ export function Disputas() {
     void invalidate('admin-dashboard')
   }
 
-  if (isLoading) return <p className="text-brand-500">Cargando disputas…</p>
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <CardSkeleton rows={2} />
+        <CardSkeleton rows={2} />
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4">
@@ -67,13 +75,15 @@ export function Disputas() {
             value={comentarios[d.id] ?? ''}
             onChange={(e) => setComentarios((c) => ({ ...c, [d.id]: e.target.value }))}
           />
-          <Button
-            className="mt-3"
-            onClick={() => resolver(d.id)}
-            disabled={resolving === d.id}
-          >
-            {resolving === d.id ? 'Resolviendo…' : 'Marcar como resuelto'}
-          </Button>
+          <div className="mt-3">
+            <ConfirmButton
+              label={resolving === d.id ? 'Resolviendo…' : 'Marcar como resuelto'}
+              confirmLabel="Sí, marcar resuelto"
+              message="¿Confirmás que esta disputa quedó resuelta con el repartidor?"
+              onConfirm={() => resolver(d.id)}
+              disabled={resolving === d.id}
+            />
+          </div>
         </Card>
       ))}
     </div>

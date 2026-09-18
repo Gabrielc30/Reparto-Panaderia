@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useProduccionesPendientes } from './hooks'
 import { Card } from '../../components/Card'
 import { Button } from '../../components/Button'
+import { Skeleton } from '../../components/Skeleton'
 
 interface ProduccionPendiente {
   id: string
@@ -22,7 +23,10 @@ export function Produccion() {
       <Card>
         <p className="mb-3 font-semibold text-brand-900">Pendientes de resultado</p>
         {isLoading ? (
-          <p className="text-brand-500">Cargando…</p>
+          <div className="space-y-2">
+            <Skeleton className="h-14 w-full rounded-xl" />
+            <Skeleton className="h-14 w-full rounded-xl" />
+          </div>
         ) : (
           <div className="space-y-3">
             {(pendientes as unknown as ProduccionPendiente[] | undefined)?.map((produccion) => {
