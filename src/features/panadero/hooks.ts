@@ -37,6 +37,59 @@ export function useRepartidores() {
   })
 }
 
+export function useTurnosActivos() {
+  const { profile } = useAuth()
+  return useQuery({
+    queryKey: ['turnos-activos', profile?.panaderia_id],
+    enabled: !!profile,
+    queryFn: () =>
+      fetchWithCache(`turnos-activos:${profile!.panaderia_id}`, async () => {
+        const { data, error } = await supabase
+          .from('turnos_produccion')
+          .select('*')
+          .eq('activo', true)
+          .order('orden')
+        if (error) throw error
+        return data
+      }),
+  })
+}
+
+export function useProduccionesPendientes() {
+  const { profile } = useAuth()
+  return useQuery({
+    queryKey: ['producciones-pendientes', profile?.panaderia_id],
+    enabled: !!profile,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('producciones')
+        .select('*, turnos_produccion(*), produccion_insumos(*, products!produccion_insumos_producto_id_fkey(nombre))')
+        .eq('estado', 'insumos_cargados')
+        .order('fecha', { ascending: false })
+      if (error) throw error
+      return data
+    },
+  })
+}
+
+export function useProduccionDetalle(produccionId: string | undefined) {
+  return useQuery({
+    queryKey: ['produccion-detalle', produccionId],
+    enabled: !!produccionId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('producciones')
+        .select(
+          '*, turnos_produccion(*), produccion_insumos(*, products!produccion_insumos_producto_id_fkey(*), insumo:products!produccion_insumos_insumo_id_fkey(*))',
+        )
+        .eq('id', produccionId!)
+        .single()
+      if (error) throw error
+      return data
+    },
+  })
+}
+
 export function useHistorialPanadero() {
   const { profile } = useAuth()
   const fecha = todayISO()

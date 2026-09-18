@@ -85,6 +85,17 @@ export function useAdminUsers() {
   })
 }
 
+export function useAdminTurnos() {
+  return useQuery({
+    queryKey: ['admin-turnos'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('turnos_produccion').select('*').order('orden')
+      if (error) throw error
+      return data
+    },
+  })
+}
+
 export function useDisputes() {
   return useQuery({
     queryKey: ['admin-disputes'],

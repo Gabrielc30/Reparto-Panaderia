@@ -8,6 +8,8 @@ export type QueueType =
   | 'nuevo_despacho'
   | 'nuevo_despacho_local'
   | 'conversion_pan_rallado'
+  | 'crear_produccion'
+  | 'cargar_resultado_produccion'
 
 export interface QueueItem {
   id?: number

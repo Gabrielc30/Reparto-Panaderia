@@ -36,8 +36,19 @@ Desplegadas en el proyecto Supabase (`supabase/functions/*`):
 - `cerrar-dia-repartidor` — valida que no haya disputas abiertas antes de cerrar el día.
 - `conversion-pan-rallado` — valida stock y aplica la conversión de forma atómica (llama a la función SQL `aplicar_conversion_pan_rallado`).
 - `crear-usuario` — alta de usuarios (admin).
+- `crear-produccion` — panadero/admin cargan insumos de una producción; valida stock y turno activo, descuenta stock de insumos (llama a `aplicar_nueva_produccion`).
+- `cargar-resultado-produccion` — cierra una producción con el resultado de cocción, suma stock de productos terminados, bloquea doble carga (llama a `aplicar_resultado_produccion`).
 
 **Convención de nombres de productos `insumo_interno`**: `conversion-pan-rallado` busca los productos por nombre (case-insensitive) que contengan "viejo", "suelto" y "rallado" respectivamente. Al cargar el catálogo, nombrarlos de forma que incluyan esas palabras (ej. "Pan viejo (bolsas)", "Pan suelto", "Pan rallado").
+
+## Producción
+
+Registra la elaboración de productos en dos pasos separados en el tiempo (la cocción no es inmediata):
+
+1. **Nueva producción** (panadero/admin): elige un turno (configurable por panadería en `/admin/turnos`, sin turnos hardcodeados) y fecha, carga uno o más productos a elaborar con los insumos (`materia_prima`) usados en cada uno. Crea `producciones` (`estado='insumos_cargados'`) + `produccion_insumos`, y descuenta stock de cada insumo.
+2. **Cargar resultado de cocción** (panadero/admin), desde la lista de producciones pendientes: carga la cantidad obtenida por producto. Crea `produccion_resultados`, pasa `producciones.estado` a `'cocinado'` con `fecha_coccion`, y suma stock de cada producto terminado. Una producción cocinada queda de solo lectura.
+
+`/admin/turnos` es un CRUD simple (RLS ya restringe a admin); el resto pasa por Edge Functions + funciones SQL atómicas por la validación de stock.
 
 ## Offline
 

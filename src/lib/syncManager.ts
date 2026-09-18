@@ -83,6 +83,9 @@ const handlers: Record<QueueType, Handler> = {
     const { error } = await supabase.from('local_dispatches').insert(payload as never)
     if (error) throw toError(error)
   },
+
+  crear_produccion: (payload) => invokeEdgeFunction('crear-produccion', payload),
+  cargar_resultado_produccion: (payload) => invokeEdgeFunction('cargar-resultado-produccion', payload),
 }
 
 type Listener = (pendingCount: number) => void
