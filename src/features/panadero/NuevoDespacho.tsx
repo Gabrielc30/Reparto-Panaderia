@@ -112,8 +112,8 @@ export function NuevoDespacho() {
           <button
             type="button"
             onClick={() => setDestino('repartidor')}
-            className={`flex-1 rounded-lg py-3 text-sm font-semibold ${
-              destino === 'repartidor' ? 'bg-brand-700 text-white' : 'bg-brand-100 text-brand-700'
+            className={`min-h-12 flex-1 rounded-lg text-base font-bold ${
+              destino === 'repartidor' ? 'bg-brand-700 text-white' : 'bg-brand-100 text-brand-900'
             }`}
           >
             A repartidor
@@ -121,8 +121,8 @@ export function NuevoDespacho() {
           <button
             type="button"
             onClick={() => setDestino('local')}
-            className={`flex-1 rounded-lg py-3 text-sm font-semibold ${
-              destino === 'local' ? 'bg-brand-700 text-white' : 'bg-brand-100 text-brand-700'
+            className={`min-h-12 flex-1 rounded-lg text-base font-bold ${
+              destino === 'local' ? 'bg-brand-700 text-white' : 'bg-brand-100 text-brand-900'
             }`}
           >
             Al local
@@ -151,7 +151,7 @@ export function NuevoDespacho() {
         <p className="mb-3 font-semibold text-brand-900">Productos</p>
         <div className="space-y-3">
           {rows.map((row) => (
-            <div key={row.key} className="space-y-2 rounded-xl border border-brand-100 p-3">
+            <div key={row.key} className="space-y-2 rounded-lg ring-1 ring-brand-100 p-3">
               <SelectField
                 label="Producto"
                 value={row.producto_id}

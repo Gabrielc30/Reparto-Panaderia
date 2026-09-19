@@ -198,7 +198,7 @@ export function CargarReparto() {
         <p className="mb-3 font-semibold text-brand-900">Productos</p>
         <div className="space-y-4">
           {items.map((row) => (
-            <div key={row.key} className="space-y-2 rounded-xl border border-brand-100 p-3">
+            <div key={row.key} className="space-y-2 rounded-lg ring-1 ring-brand-100 p-3">
               <SelectField
                 label="Producto"
                 value={row.producto_id}
@@ -332,7 +332,7 @@ export function CargarReparto() {
         />
       </Card>
 
-      <div className="rounded-xl bg-brand-100 p-4 text-center">
+      <div className="rounded-lg bg-brand-100 p-4 text-center">
         <p className="text-sm text-brand-700">Total venta</p>
         <p className="text-2xl font-bold text-brand-900">{formatMoney(montoTotal)}</p>
       </div>

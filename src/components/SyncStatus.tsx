@@ -20,7 +20,7 @@ export function SyncStatus() {
         {open && (
           <>
             <div className="fixed inset-0 z-20" onClick={() => setOpen(false)} />
-            <div className="absolute right-0 top-full z-30 mt-2 w-80 rounded-xl border border-brand-100 bg-white p-3 shadow-lg">
+            <div className="absolute right-0 top-full z-30 mt-2 w-80 rounded-lg bg-white p-3 shadow-lg ring-1 ring-brand-100">
               <p className="mb-2 text-sm font-semibold text-brand-900">No se pudieron sincronizar</p>
               <div className="max-h-64 space-y-2 overflow-y-auto">
                 {erroredItems.map((item) => (
@@ -29,7 +29,7 @@ export function SyncStatus() {
                     <p className="mt-0.5 text-xs text-red-700">{item.error}</p>
                     <button
                       onClick={() => item.id != null && void retryItem(item.id)}
-                      className="mt-2 rounded-lg border-2 border-brand-700 px-3 py-1 text-xs font-semibold text-brand-700"
+                      className="mt-2 rounded-lg border-2 border-brand-900 px-3 py-2 text-sm font-semibold text-brand-900"
                     >
                       Reintentar
                     </button>
@@ -38,7 +38,7 @@ export function SyncStatus() {
               </div>
               <button
                 onClick={() => void retryAllErrored()}
-                className="mt-3 w-full rounded-lg bg-brand-700 py-2 text-sm font-semibold text-white"
+                className="mt-3 min-h-11 w-full rounded-lg bg-brand-700 text-sm font-bold text-white"
               >
                 Reintentar todo
               </button>

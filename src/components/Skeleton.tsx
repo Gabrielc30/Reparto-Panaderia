@@ -4,7 +4,7 @@ export function Skeleton({ className = '' }: { className?: string }) {
 
 export function CardSkeleton({ rows = 3 }: { rows?: number }) {
   return (
-    <div className="rounded-2xl border border-brand-100 bg-white p-4 shadow-sm">
+    <div className="rounded-lg bg-white p-4 ring-1 ring-brand-100">
       <Skeleton className="mb-4 h-4 w-1/2" />
       <div className="space-y-3">
         {Array.from({ length: rows }).map((_, i) => (

@@ -24,8 +24,8 @@ export function Produccion() {
         <p className="mb-3 font-semibold text-brand-900">Pendientes de resultado</p>
         {isLoading ? (
           <div className="space-y-2">
-            <Skeleton className="h-14 w-full rounded-xl" />
-            <Skeleton className="h-14 w-full rounded-xl" />
+            <Skeleton className="h-14 w-full rounded-lg" />
+            <Skeleton className="h-14 w-full rounded-lg" />
           </div>
         ) : (
           <div className="space-y-3">
@@ -34,7 +34,7 @@ export function Produccion() {
                 ...new Set(produccion.produccion_insumos.map((i) => i.products.nombre)),
               ]
               return (
-                <div key={produccion.id} className="rounded-xl border border-brand-100 p-3">
+                <div key={produccion.id} className="rounded-lg ring-1 ring-brand-100 p-3">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium text-brand-900">

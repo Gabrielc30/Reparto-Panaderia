@@ -10,13 +10,13 @@ interface NumberStepperProps {
 export function NumberStepper({ label, value, onChange, min = 0, step = 1, error }: NumberStepperProps) {
   return (
     <div>
-      {label && <span className="mb-1 block text-sm font-medium text-brand-900">{label}</span>}
+      {label && <span className="mb-1.5 block text-[15px] font-semibold text-brand-900">{label}</span>}
       <div className="flex items-center gap-2">
         <button
           type="button"
           aria-label="Restar"
           onClick={() => onChange(Math.max(min, roundStep(value - step, step)))}
-          className="h-12 w-12 flex-shrink-0 rounded-xl border-2 border-brand-700 text-xl font-semibold text-brand-700 active:bg-brand-50"
+          className="h-14 w-14 flex-shrink-0 rounded-[10px] border-2 border-brand-900 text-2xl font-bold text-brand-900 active:bg-brand-100"
         >
           –
         </button>
@@ -27,15 +27,15 @@ export function NumberStepper({ label, value, onChange, min = 0, step = 1, error
           step={step}
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
-          className={`h-12 flex-1 rounded-xl border-2 bg-white text-center text-lg font-semibold text-brand-900 focus:outline-none ${
-            error ? 'border-red-500 bg-red-50' : 'border-brand-100 focus:border-brand-500'
+          className={`h-14 min-w-0 flex-1 rounded-[10px] border-2 bg-white text-center text-xl font-bold text-brand-900 ${
+            error ? 'border-red-500 bg-red-50' : 'border-brand-900'
           }`}
         />
         <button
           type="button"
           aria-label="Sumar"
           onClick={() => onChange(roundStep(value + step, step))}
-          className="h-12 w-12 flex-shrink-0 rounded-xl bg-brand-700 text-xl font-semibold text-white active:bg-brand-900"
+          className="h-14 w-14 flex-shrink-0 rounded-[10px] bg-brand-700 text-2xl font-bold text-white active:bg-brand-600"
         >
           +
         </button>

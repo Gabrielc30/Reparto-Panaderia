@@ -73,7 +73,7 @@ export function Clientes() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-brand-900">Clientes</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight text-brand-900">Clientes</h1>
         <Button className="w-auto px-4 py-2" onClick={openCreate}>
           + Nuevo
         </Button>

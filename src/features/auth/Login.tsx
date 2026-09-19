@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../../auth/AuthContext'
 import { Button } from '../../components/Button'
+import { ThemeToggle } from '../../components/ThemeToggle'
 import { TextField } from '../../components/TextField'
 import { Card } from '../../components/Card'
 
@@ -28,10 +29,13 @@ export function Login() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-brand-50 px-4">
+    <div className="relative flex min-h-screen items-center justify-center bg-brand-50 px-4">
+      <div className="absolute right-4 top-4">
+        <ThemeToggle />
+      </div>
       <Card className="w-full max-w-sm">
-        <h1 className="mb-1 text-center text-2xl font-bold text-brand-900">Repartos Panadería</h1>
-        <p className="mb-6 text-center text-sm text-brand-500">Ingresá con tu cuenta</p>
+        <h1 className="mb-1 text-center text-4xl font-extrabold tracking-tight text-brand-900">Repartos Panadería</h1>
+        <p className="mb-6 text-center text-base text-brand-500">Ingresá con tu cuenta</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <TextField

@@ -14,8 +14,8 @@ export default defineConfig({
         name: 'Repartos Panadería',
         short_name: 'Repartos',
         description: 'Control de repartos, despachos y cuentas corrientes de panadería',
-        theme_color: '#7c3f00',
-        background_color: '#fffaf0',
+        theme_color: '#1f3fcc',
+        background_color: '#eff1ed',
         display: 'standalone',
         start_url: '/',
         icons: [

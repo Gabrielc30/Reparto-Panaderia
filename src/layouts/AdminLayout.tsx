@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { SyncStatus } from '../components/SyncStatus'
+import { ThemeToggle } from '../components/ThemeToggle'
 import {
   IconAlertTriangle,
   IconBars,
   IconBox,
+  IconBread,
   IconClock,
   IconDocument,
   IconFactory,
@@ -15,9 +17,10 @@ import {
 } from '../components/icons'
 
 const pageItems = [
-  { to: '/admin', label: 'Dashboard', icon: <IconBars />, end: true },
+  { to: '/admin', label: 'Hoy', icon: <IconBars />, end: true },
   { to: '/admin/clientes', label: 'Clientes', icon: <IconDocument /> },
   { to: '/admin/productos', label: 'Productos', icon: <IconBox /> },
+  { to: '/admin/insumos', label: 'Insumos', icon: <IconBread /> },
   { to: '/admin/usuarios', label: 'Usuarios', icon: <IconUsers /> },
   { to: '/admin/disputas', label: 'Disputas', icon: <IconAlertTriangle /> },
   { to: '/admin/reportes', label: 'Reportes', icon: <IconTrendingUp /> },
@@ -36,16 +39,16 @@ export function AdminLayout() {
   return (
     <div className="flex h-screen bg-brand-50">
       <aside
-        className={`fixed inset-y-0 left-0 z-20 w-64 transform border-r border-brand-100 bg-white transition-transform md:static md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-20 w-64 transform flex flex-col bg-side text-side-ink transition-transform md:static md:translate-x-0 ${
           menuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="border-b border-brand-100 px-5 py-4">
-          <p className="text-lg font-bold text-brand-900">Panadería</p>
-          <p className="text-xs text-brand-500">Panel de administración</p>
+        <div className="px-5 pb-3 pt-6">
+          <p className="text-[22px] font-extrabold tracking-tight text-white" style={{ color: '#fff' }}>Repartos</p>
+          <p className="text-sm text-side-mute">Panel de administración</p>
         </div>
-        <nav className="flex flex-col gap-1 p-3">
-          <p className="px-3 pb-2 pt-1 text-xs font-bold uppercase tracking-wide text-brand-500/70">Páginas</p>
+        <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto p-3">
+          <p className="px-3 pb-1.5 pt-2 text-sm font-semibold text-side-mute">Páginas</p>
           {pageItems.map((item) => (
             <NavLink
               key={item.to}
@@ -53,8 +56,8 @@ export function AdminLayout() {
               end={item.end}
               onClick={() => setMenuOpen(false)}
               className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium [&>svg]:h-[18px] [&>svg]:w-[18px] ${
-                  isActive ? 'bg-brand-700 text-white' : 'text-brand-700 hover:bg-brand-50'
+                `flex min-h-11 items-center gap-3 rounded-lg px-3 text-base font-semibold [&>svg]:h-[18px] [&>svg]:w-[18px] ${
+                  isActive ? 'bg-side-on text-side-on-ink' : 'text-side-ink hover:bg-side-on/40'
                 }`
               }
             >
@@ -63,19 +66,22 @@ export function AdminLayout() {
             </NavLink>
           ))}
 
-          <p className="px-3 pb-2 pt-4 text-xs font-bold uppercase tracking-wide text-brand-500/70">Atajos</p>
+          <p className="px-3 pb-1.5 pt-4 text-sm font-semibold text-side-mute">Atajos</p>
           {shortcutItems.map((item) => (
             <Link
               key={item.to}
               to={item.to}
               onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-brand-700 hover:bg-brand-50 [&>svg]:h-[18px] [&>svg]:w-[18px]"
+              className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-base font-semibold text-side-ink hover:bg-side-on/40 [&>svg]:h-[18px] [&>svg]:w-[18px]"
             >
               {item.icon}
               {item.label}
             </Link>
           ))}
         </nav>
+        <div className="flex p-3">
+          <ThemeToggle variant="switch" />
+        </div>
       </aside>
 
       {menuOpen && (
@@ -86,9 +92,10 @@ export function AdminLayout() {
       )}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-brand-100 bg-white px-4 py-3">
+        <header className="flex items-center justify-between border-b-2 border-brand-100 bg-white px-4 py-3">
           <button
-            className="rounded-lg p-2 text-brand-700 md:hidden"
+            aria-label="Abrir menú"
+            className="grid h-11 w-11 place-items-center rounded-lg text-xl text-brand-900 md:hidden"
             onClick={() => setMenuOpen((v) => !v)}
           >
             ☰
@@ -96,7 +103,7 @@ export function AdminLayout() {
           <div className="hidden md:block" />
           <div className="flex items-center gap-3">
             <SyncStatus />
-            <span className="text-sm text-brand-900">{profile?.nombre}</span>
+            <span className="text-base font-semibold text-brand-900">{profile?.nombre}</span>
             <button
               onClick={() => void signOut()}
               className="text-sm font-medium text-brand-700 underline"

@@ -1,12 +1,110 @@
 @import "tailwindcss";
 
+/* Tokens semánticos: claro por defecto, oscuro por ajuste del sistema o por elección del usuario. */
+:root {
+  --bg: #eff1ed;
+  --card: #ffffff;
+  --line: #d5d9d2;
+  --ink: #161c2e;
+  --ink2: #4b5468;
+  --acc: #1f3fcc;
+  --acc-press: #162d99;
+  --ok: #17704a;
+  --ok-bg: #ddf0e6;
+  --bad: #b3261e;
+  --bad-bg: #fbe4e2;
+  --bad-line: #efb3ae;
+  --warn: #a85508;
+  --warn-bg: #f6e7d3;
+  --side: #161c2e;
+  --side-ink: #c9d0e4;
+  --side-mute: #8e98b4;
+  --side-on-bg: #ffffff;
+  --side-on-ink: #161c2e;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12151d;
+    --card: #1b2030;
+    --line: #2c3348;
+    --ink: #eef1f8;
+    --ink2: #a4adc4;
+    --acc: #8fa8ff;
+    --acc-press: #b3c3ff;
+    --ok: #7ddba8;
+    --ok-bg: #16352a;
+    --bad: #ff8a80;
+    --bad-bg: #3a1a1a;
+    --bad-line: #6b2f2b;
+    --warn: #ffb86b;
+    --warn-bg: #3a2a14;
+    --side: #0b0e14;
+    --side-on-bg: #2c3348;
+    --side-on-ink: #eef1f8;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #12151d;
+  --card: #1b2030;
+  --line: #2c3348;
+  --ink: #eef1f8;
+  --ink2: #a4adc4;
+  --acc: #8fa8ff;
+  --acc-press: #b3c3ff;
+  --ok: #7ddba8;
+  --ok-bg: #16352a;
+  --bad: #ff8a80;
+  --bad-bg: #3a1a1a;
+  --bad-line: #6b2f2b;
+  --warn: #ffb86b;
+  --warn-bg: #3a2a14;
+  --side: #0b0e14;
+  --side-on-bg: #2c3348;
+  --side-on-ink: #eef1f8;
+  color-scheme: dark;
+}
+
+/*
+ * Las clases existentes (brand-*, white, red-*, green-*, amber-*) se reasignan a los tokens,
+ * así todas las pantallas cambian de tema sin tocar cada clase.
+ */
 @theme {
-  --color-brand-50: #fdf6ec;
-  --color-brand-100: #f8e8cf;
-  --color-brand-500: #b06a1f;
-  --color-brand-600: #955618;
-  --color-brand-700: #7c3f00;
-  --color-brand-900: #4a2600;
+  --font-sans: "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --color-brand-50: var(--bg);
+  --color-brand-100: var(--line);
+  --color-brand-500: var(--ink2);
+  --color-brand-600: var(--acc-press);
+  --color-brand-700: var(--acc);
+  --color-brand-900: var(--ink);
+
+  --color-white: var(--card);
+
+  --color-red-50: var(--bad-bg);
+  --color-red-100: var(--bad-bg);
+  --color-red-200: var(--bad-line);
+  --color-red-500: var(--bad);
+  --color-red-600: var(--bad);
+  --color-red-700: var(--bad);
+  --color-red-800: var(--bad);
+
+  --color-green-100: var(--ok-bg);
+  --color-green-800: var(--ok);
+
+  --color-amber-50: var(--warn-bg);
+  --color-amber-100: var(--warn-bg);
+  --color-amber-300: var(--warn);
+  --color-amber-800: var(--warn);
+
+  --color-side: var(--side);
+  --color-side-ink: var(--side-ink);
+  --color-side-mute: var(--side-mute);
+  --color-side-on: var(--side-on-bg);
+  --color-side-on-ink: var(--side-on-ink);
 }
 
 html,
@@ -16,6 +114,13 @@ body,
 }
 
 body {
-  background-color: var(--color-brand-50);
+  background-color: var(--bg);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
   -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 3px solid var(--acc);
+  outline-offset: 2px;
 }

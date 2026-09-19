@@ -162,7 +162,7 @@ export function NuevaProduccion() {
             {linea.insumos.map((insumo) => {
               const materiaPrima = materiasPrimas.find((m) => m.id === insumo.insumo_id)
               return (
-                <div key={insumo.key} className="rounded-xl border border-brand-100 p-3">
+                <div key={insumo.key} className="rounded-lg ring-1 ring-brand-100 p-3">
                   <SelectField
                     label="Insumo"
                     value={insumo.insumo_id}

@@ -10,13 +10,13 @@ export function TextField({
   const fieldId = id ?? label.toLowerCase().replace(/\s+/g, '-')
   return (
     <label htmlFor={fieldId} className="block">
-      <span className={`mb-1 block text-sm font-medium ${error ? 'text-red-600' : 'text-brand-900'}`}>
+      <span className={`mb-1.5 block text-[15px] font-semibold ${error ? 'text-red-600' : 'text-brand-900'}`}>
         {label}
       </span>
       <input
         id={fieldId}
-        className={`w-full rounded-xl border-2 bg-white px-4 py-3 text-base text-brand-900 focus:outline-none ${
-          error ? 'border-red-500 bg-red-50' : 'border-brand-100 focus:border-brand-500'
+        className={`h-14 w-full rounded-[10px] border-2 bg-white px-4 text-lg font-semibold text-brand-900 ${
+          error ? 'border-red-500 bg-red-50' : 'border-brand-900'
         } ${className}`}
         {...props}
       />

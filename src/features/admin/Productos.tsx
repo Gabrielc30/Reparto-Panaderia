@@ -10,26 +10,40 @@ import { TableSkeleton } from '../../components/Skeleton'
 import { formatMoney } from '../../lib/date'
 import type { Product, TipoProducto, UnidadMedida } from '../../types/domain'
 
-const emptyForm = {
-  nombre: '',
-  tipo: 'venta_normal' as TipoProducto,
-  unidad_medida: 'unidad' as UnidadMedida,
-  precio_unitario: '0',
-  stock: '0',
+type Modo = 'venta' | 'insumos'
+
+const tipoLabel: Record<string, string> = {
+  venta_normal: 'Venta',
+  insumo_interno: 'Insumo interno',
+  materia_prima: 'Materia prima',
 }
 
-export function Productos() {
+function emptyForm(modo: Modo) {
+  return {
+    nombre: '',
+    tipo: (modo === 'venta' ? 'venta_normal' : 'materia_prima') as TipoProducto,
+    unidad_medida: 'unidad' as UnidadMedida,
+    precio_unitario: '0',
+    stock: '0',
+  }
+}
+
+function CatalogoProductos({ modo }: { modo: Modo }) {
+  const esVenta = modo === 'venta'
+  const singular = esVenta ? 'producto' : 'insumo'
   const { profile } = useAuth()
   const { data: products, isLoading } = useAdminProducts()
   const invalidate = useInvalidateAdmin()
   const [editing, setEditing] = useState<Product | null>(null)
-  const [form, setForm] = useState(emptyForm)
+  const [form, setForm] = useState(emptyForm(modo))
   const [open, setOpen] = useState(false)
   const [saving, setSaving] = useState(false)
 
+  const visibles = (products ?? []).filter((p) => (esVenta ? p.tipo === 'venta_normal' : p.tipo !== 'venta_normal'))
+
   function openCreate() {
     setEditing(null)
-    setForm(emptyForm)
+    setForm(emptyForm(modo))
     setOpen(true)
   }
 
@@ -52,7 +66,7 @@ export function Productos() {
       nombre: form.nombre,
       tipo: form.tipo,
       unidad_medida: form.unidad_medida,
-      precio_unitario: Number(form.precio_unitario),
+      precio_unitario: esVenta ? Number(form.precio_unitario) : 0,
       stock: Number(form.stock),
     }
     if (editing) {
@@ -68,29 +82,38 @@ export function Productos() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-brand-900">Productos</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight text-brand-900">{esVenta ? 'Productos' : 'Insumos'}</h1>
         <Button className="w-auto px-4 py-2" onClick={openCreate}>
           + Nuevo
         </Button>
       </div>
+      {!esVenta && (
+        <p className="text-sm text-brand-500">
+          Materias primas (harina, levadura…) e insumos internos (pan viejo, pan rallado). No se venden directamente.
+        </p>
+      )}
 
       {open && (
         <Card>
-          <p className="mb-3 font-semibold text-brand-900">{editing ? 'Editar producto' : 'Nuevo producto'}</p>
+          <p className="mb-3 font-semibold text-brand-900">
+            {editing ? `Editar ${singular}` : `Nuevo ${singular}`}
+          </p>
           <div className="grid gap-3 md:grid-cols-2">
             <TextField
               label="Nombre"
               value={form.nombre}
               onChange={(e) => setForm((f) => ({ ...f, nombre: e.target.value }))}
             />
-            <SelectField
-              label="Tipo"
-              value={form.tipo}
-              onChange={(e) => setForm((f) => ({ ...f, tipo: e.target.value as TipoProducto }))}
-            >
-              <option value="venta_normal">Venta normal</option>
-              <option value="insumo_interno">Insumo interno</option>
-            </SelectField>
+            {!esVenta && (
+              <SelectField
+                label="Tipo"
+                value={form.tipo}
+                onChange={(e) => setForm((f) => ({ ...f, tipo: e.target.value as TipoProducto }))}
+              >
+                <option value="materia_prima">Materia prima</option>
+                <option value="insumo_interno">Insumo interno</option>
+              </SelectField>
+            )}
             <SelectField
               label="Unidad de medida"
               value={form.unidad_medida}
@@ -99,14 +122,16 @@ export function Productos() {
               <option value="unidad">Unidad</option>
               <option value="kg">Kg</option>
             </SelectField>
-            <TextField
-              label="Precio unitario"
-              type="number"
-              min={0}
-              step="0.01"
-              value={form.precio_unitario}
-              onChange={(e) => setForm((f) => ({ ...f, precio_unitario: e.target.value }))}
-            />
+            {esVenta && (
+              <TextField
+                label="Precio unitario"
+                type="number"
+                min={0}
+                step="0.01"
+                value={form.precio_unitario}
+                onChange={(e) => setForm((f) => ({ ...f, precio_unitario: e.target.value }))}
+              />
+            )}
             <TextField
               label="Stock"
               type="number"
@@ -136,18 +161,18 @@ export function Productos() {
               <thead>
                 <tr className="border-b border-brand-100 text-brand-500">
                   <th className="py-2">Nombre</th>
-                  <th>Tipo</th>
-                  <th>Precio</th>
+                  {!esVenta && <th>Tipo</th>}
+                  {esVenta && <th>Precio</th>}
                   <th>Stock</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
-                {products?.map((p) => (
+                {visibles.map((p) => (
                   <tr key={p.id} className="border-b border-brand-100 last:border-0">
                     <td className="py-2 font-medium text-brand-900">{p.nombre}</td>
-                    <td className="capitalize">{p.tipo.replace('_', ' ')}</td>
-                    <td>{formatMoney(p.precio_unitario)}</td>
+                    {!esVenta && <td>{tipoLabel[p.tipo] ?? p.tipo}</td>}
+                    {esVenta && <td>{formatMoney(p.precio_unitario)}</td>}
                     <td>
                       {p.stock} {p.unidad_medida}
                     </td>
@@ -158,6 +183,13 @@ export function Productos() {
                     </td>
                   </tr>
                 ))}
+                {visibles.length === 0 && (
+                  <tr>
+                    <td className="py-2 text-brand-500" colSpan={4}>
+                      Sin {esVenta ? 'productos' : 'insumos'} todavía.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -165,4 +197,12 @@ export function Productos() {
       </Card>
     </div>
   )
+}
+
+export function Productos() {
+  return <CatalogoProductos modo="venta" />
+}
+
+export function Insumos() {
+  return <CatalogoProductos modo="insumos" />
 }
