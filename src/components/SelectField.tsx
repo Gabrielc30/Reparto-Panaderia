@@ -10,10 +10,10 @@ export function SelectField({
   const fieldId = id ?? label.toLowerCase().replace(/\s+/g, '-')
   return (
     <label htmlFor={fieldId} className="block">
-      <span className="mb-1 block text-sm font-medium text-brand-900">{label}</span>
+      <span className="mb-1.5 block text-[15px] font-semibold text-brand-900">{label}</span>
       <select
         id={fieldId}
-        className={`w-full rounded-xl border-2 border-brand-100 bg-white px-4 py-3 text-base text-brand-900 focus:border-brand-500 focus:outline-none ${className}`}
+        className={`h-14 w-full rounded-[10px] border-2 border-brand-900 bg-white px-4 text-lg font-semibold text-brand-900 ${className}`}
         {...props}
       >
         {children}

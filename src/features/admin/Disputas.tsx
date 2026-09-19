@@ -40,7 +40,7 @@ export function Disputas() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-bold text-brand-900">Disputas pendientes</h1>
+      <h1 className="text-3xl font-extrabold tracking-tight text-brand-900">Disputas pendientes</h1>
       {error && <p className="text-sm font-medium text-red-600">{error}</p>}
 
       {disputes?.length === 0 && (

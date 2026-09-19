@@ -6,6 +6,9 @@ import './index.css'
 import './lib/syncManager'
 import App from './App.tsx'
 import { AuthProvider } from './auth/AuthContext'
+import { applyTheme } from './lib/theme'
+
+applyTheme()
 
 const queryClient = new QueryClient({
   defaultOptions: {

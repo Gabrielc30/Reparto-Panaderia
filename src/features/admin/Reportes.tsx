@@ -73,7 +73,7 @@ export function Reportes() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-bold text-brand-900">Reportes</h1>
+      <h1 className="text-3xl font-extrabold tracking-tight text-brand-900">Reportes</h1>
 
       <Card>
         <div className="flex flex-wrap items-end gap-3">
